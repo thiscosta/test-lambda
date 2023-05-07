@@ -4,9 +4,12 @@ const redis = require("redis");
 const util = require("util");
 const KEY = `account1/balance`;
 const DEFAULT_BALANCE = 100;
+const NS_PER_SEC = 1e9;
+const MS_PER_NS = 1e-6
 
 exports.chargeRequestRedis = async function (input) {
     const redisClient = await getRedisClient();
+    const time = process.hrtime();
     let remainingBalance = await getBalanceRedis(redisClient, KEY);
     const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
@@ -18,11 +21,14 @@ exports.chargeRequestRedis = async function (input) {
         };
     }
     remainingBalance = await chargeRedis(redisClient, KEY, charges);
+    const diff = process.hrtime(time);
+
     await disconnectRedis(redisClient);
     return {
         remainingBalance,
         charges,
         isAuthorized,
+        ms: (diff[0] * NS_PER_SEC + diff[1])  * MS_PER_NS
     };
 };
 

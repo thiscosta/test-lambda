@@ -4,8 +4,11 @@ const memcached = require("memcached");
 const KEY = `account1/balance`;
 const DEFAULT_BALANCE = 100;
 const memcachedClient = new memcached(`${process.env.ENDPOINT}:${process.env.PORT}`);
+const NS_PER_SEC = 1e9;
+const MS_PER_NS = 1e-6
 
 exports.chargeRequestMemcached = async function (input) {
+    const time = process.hrtime();
     var remainingBalance = await getBalanceMemcached(KEY);
     const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
@@ -17,10 +20,12 @@ exports.chargeRequestMemcached = async function (input) {
         };
     }
     remainingBalance = await chargeMemcached(KEY, charges);
+    const diff = process.hrtime(time);
     return {
         remainingBalance,
         charges,
         isAuthorized,
+        ms: (diff[0] * NS_PER_SEC + diff[1])  * MS_PER_NS
     };
 };
 
