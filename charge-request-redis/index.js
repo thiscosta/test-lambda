@@ -8,7 +8,7 @@ const DEFAULT_BALANCE = 100;
 exports.chargeRequestRedis = async function (input) {
     const redisClient = await getRedisClient();
     let remainingBalance = await getBalanceRedis(redisClient, KEY);
-    const charges = getCharges(input.body);
+    const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
     if (!isAuthorized) {
         return {
@@ -67,7 +67,7 @@ function authorizeRequest(remainingBalance, charges) {
 
 function getCharges(body) {
     try {
-        return JSON.parse(body)?.charges || DEFAULT_BALANCE / 20;
+        return body.charges ? Number(body.charges) : DEFAULT_BALANCE / 20;
     } catch (err) {
         return DEFAULT_BALANCE / 20
     }

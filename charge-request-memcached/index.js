@@ -7,7 +7,7 @@ const memcachedClient = new memcached(`${process.env.ENDPOINT}:${process.env.POR
 
 exports.chargeRequestMemcached = async function (input) {
     var remainingBalance = await getBalanceMemcached(KEY);
-    const charges = getCharges(input.body);
+    const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
     if (!isAuthorized) {
         return {
@@ -27,9 +27,10 @@ exports.chargeRequestMemcached = async function (input) {
 function authorizeRequest(remainingBalance, charges) {
     return remainingBalance >= charges;
 }
+
 function getCharges(body) {
     try {
-        return JSON.parse(body)?.charges || DEFAULT_BALANCE / 20;
+        return body.charges ? Number(body.charges) : DEFAULT_BALANCE / 20;
     } catch (err) {
         return DEFAULT_BALANCE / 20
     }
