@@ -9,9 +9,9 @@ const MS_PER_NS = 1e-6
 
 exports.chargeRequestRedis = async function (input) {
     const redisClient = await getRedisClient();
+    const charges = getCharges(input);
     const time = process.hrtime();
     let remainingBalance = await getBalanceRedis(redisClient, KEY);
-    const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
     if (!isAuthorized) {
         return {

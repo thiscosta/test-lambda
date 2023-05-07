@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const memcached = require("memcached");
 const KEY = `account1/balance`;
-const DEFAULT_BALANCE = 100;
+const DEFAULT_BALANCE = 1000000;
 const MAX_EXPIRATION = 60 * 60 * 24 * 30;
 const memcachedClient = new memcached(`${process.env.ENDPOINT}:${process.env.PORT}`);
 

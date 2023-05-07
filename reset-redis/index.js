@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis = require("redis");
 const KEY = `account1/balance`;
-const DEFAULT_BALANCE = 100;
+const DEFAULT_BALANCE = 1000000;
 
 exports.resetRedis = async function () {
     const redisClient = await getRedisClient();

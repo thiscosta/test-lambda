@@ -8,9 +8,9 @@ const NS_PER_SEC = 1e9;
 const MS_PER_NS = 1e-6
 
 exports.chargeRequestMemcached = async function (input) {
+    const charges = getCharges(input);
     const time = process.hrtime();
     var remainingBalance = await getBalanceMemcached(KEY);
-    const charges = getCharges(input);
     const isAuthorized = authorizeRequest(remainingBalance, charges);
     if (!isAuthorized) {
         return {
